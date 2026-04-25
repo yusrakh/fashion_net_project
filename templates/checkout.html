@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Discover top fashion products in various categories at Fashion.net. Shop the latest trends in women's fashion, men's fashion, and more.">
+    <title>Fashion.net - Checkout</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        /* Header and Footer styles */
+        header {
+            background-color: black;
+            color: white;
+        }
+
+        footer {
+            font-size: 12px;
+            justify-content: center;
+            background-color: black;
+            color: white;
+            padding: 10px 0;
+        }
+
+        .navbar-brand {
+            font-size: 20px;
+            text-align: center;
+        }
+
+        /* Product Grid */
+        .product-item {
+            margin-bottom: 15px;
+        }
+
+        /* Checkout Form */
+        .checkout-form {
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-details {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .product-details img {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .checkout-summary {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header with Navbar -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <a class="navbar-brand" href="#">Fashion.net</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <section id="checkout-section" class="container">
+        <h3 class="checkout-heading">Enter Your Details Here for Checkout</h3>
+
+        <!-- Checkout Form -->
+        <form class="checkout-form">
+            <div class="form-group">
+                <label for="country-region">Country/Region</label>
+                <input type="text" id="country-region" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="full-name">Full Name</label>
+                <input type="text" id="full-name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" id="address" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" id="city" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="postal-code">Postal Code</label>
+                <input type="text" id="postal-code" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone</label>
+                <input type="text" id="phone" class="form-control" required>
+            </div>
+
+            <!-- Payment Option -->
+            <div>
+                <h4>Payment Option:</h4>
+                <p>Cash on delivery (COD) available only</p>
+            </div>
+
+            <!-- Order Summary -->
+            <h4>Order Summary</h4>
+            <div id="order-summary"></div>
+
+            <!-- Subtotal, Shipping, Total -->
+            <div class="checkout-summary">
+                <div class="product-details">
+                    <span><strong>Subtotal:</strong></span>
+                    <span id="subtotal">PKR 0.00</span>
+                </div>
+                <div class="product-details">
+                    <span><strong>Shipping:</strong></span>
+                    <span id="shipping-cost">PKR 199.00</span>
+                </div>
+                <div class="product-details">
+                    <span><strong>Total:</strong></span>
+                    <span id="total-price">PKR 0.00</span>
+                </div>
+            </div>
+
+            <!-- Complete Order Button -->
+            <div class="form-group">
+                <button type="button" id="complete-order-btn" class="btn btn-success" onclick="completeOrder()">Complete Order</button>
+            </div>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p class="text-center">All rights reserved. Fashion.net © 2024</p>
+    </footer>
+
+    <script>
+        // Get cart data from localStorage
+        function getCart() {
+            return JSON.parse(localStorage.getItem('cart')) || [];
+        }
+    
+        // Display order summary
+        function displayOrderSummary() {
+            const cart = getCart();
+            const orderSummary = document.getElementById('order-summary');
+            let subtotal = 0;
+    
+            orderSummary.innerHTML = '';
+    
+            cart.forEach(item => {
+                const productDiv = document.createElement('div');
+                productDiv.className = 'product-details';
+                productDiv.innerHTML = `
+                    <div>
+                        <img src="${item.image}" alt="${item.name}">
+                        ${item.name} - ${item.size}
+                    </div>
+                    <div>${item.price}</div>
+                `;
+                orderSummary.appendChild(productDiv);
+                subtotal += parseFloat(item.price);
+            });
+    
+            document.getElementById('subtotal').innerText = `PKR ${subtotal.toFixed(2)}`;
+            const total = subtotal + 199; // Add shipping cost
+            document.getElementById('total-price').innerText = `PKR ${total.toFixed(2)}`;
+        }
+    
+        // Complete Order
+function completeOrder() {
+    // Alert the user and redirect to the login page
+    alert('You must be logged in to place an order.');
+    window.location.href = '/login'; // Redirect to the login.html
+}
+
+        // Initialize the page
+        displayOrderSummary();
+    </script>
+    
+</body>
+
+</html>

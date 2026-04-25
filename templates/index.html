@@ -1,0 +1,545 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Discover top fashion products in various categories at Fashion.net. Shop the latest trends in women's fashion, men's fashion, and more.">
+    <meta property="og:title" content="Fashion.net - Home">
+    <meta property="og:description" content="Find the best fashion trends at Fashion.net. Browse through a variety of stylish and trendy clothing.">
+    <meta property="og:image" content="https://example.com/yourimage.jpg">
+    <title>Fashion.net - Home</title>
+   <!-- Bootstrap CSS -->
+   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+   <!-- Custom CSS (Ensure this is correct based on your project structure) -->
+   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+   <!-- Bootstrap JS -->
+   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+   <style>
+    /* Additional CSS for styling the recommendation section */
+    #recommendation {
+        padding: 40px 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        margin-top: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    p {
+        font-size: 1.1em;
+        color: #666;
+        margin-bottom: 15px;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .recommendation-button {
+        margin: 10px;
+        padding: 10px 15px;
+        background-color: #0a0a0a;
+        color: rgb(255, 255, 255);
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        font-size: 1em;
+    }
+
+    .recommendation-button:hover {
+        background-color: #4f5051;
+        transform: scale(1.05);
+    }
+
+    .result {
+        margin-top: 20px;
+        font-weight: bold;
+        font-size: 1.2em;
+        color: #007bff;
+    }
+
+    @media (max-width: 576px) {
+        .recommendation-button {
+            width: 100%;
+            margin: 5px 0;
+        }
+    }
+
+    /* Additional CSS for styling the blog section */
+    #blog {
+        padding: 40px 0;
+    }
+
+    .blog-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .blog-post {
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        width: calc(33% - 20px);
+        padding: 15px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .blog-post img {
+        max-width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .post-meta {
+        font-size: 0.9em;
+        color: #666;
+    }
+
+    .extra-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease, opacity 0.4s ease;
+        opacity: 0;
+        margin-top: 10px;
+        text-align: left;
+        /* Align text to the left */
+        position: relative;
+        /* Allow for absolute positioning of dots */
+    }
+
+    .extra-content.show {
+        max-height: 200px;
+        /* Adjust max height as needed */
+        opacity: 1;
+    }
+
+    .extra-content.dotted-content {
+        position: relative;
+        padding-bottom: 10px;
+        /* Padding for the dots */
+    }
+
+    .extra-content.dotted-content::after {
+        content: "...";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        text-align: center;
+        /* Center the dots */
+        font-weight: bold;
+        /* Make the dots bold */
+    }
+
+    .read-more {
+        background-color: #121313;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        border-radius: 5px;
+    }
+
+    .read-more:hover {
+        background-color: #5c5d5e;
+        /* Darker shade on hover */
+    }
+
+    .read-more.active {
+        background-color: #28a745;
+        /* Change color when active */
+    }
+
+    @media (max-width: 768px) {
+        .blog-post {
+            width: calc(50% - 20px);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .blog-post {
+            width: 100%;
+        }
+    }
+</style>
+</head>
+
+<body>
+<!-- Navigation Bar -->
+<header>
+    <nav role="navigation">
+        <div class="logo">
+            <a href="index.html" aria-label="Fashion.net Home">Fashion.net</a>
+
+        </div>
+        <ul class="nav-links" role="menu">
+            <li role="none"><a href="{{ url_for('home') }}" role="menuitem">Home</a></li>
+            <li role="none"><a href="#collections" role="menuitem">Brands</a></li>
+            <li role="none"><a href="#recommendation" role="menuitem">Recommendations</a></li>
+            <li role="none"><a href="{{ url_for('blog') }}" role="menuitem">Blogs</a></li>
+            <li role="none"><a href="{{ url_for('signup') }}" role="menuitem">Sign Up</a></li>
+            <li role="none"><a href="{{ url_for('login') }}" role="menuitem">Login</a></li>
+        </ul>
+    </nav>
+</header>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Welcome to Fashion.net</h1>
+        <p style="color: rgb(255, 255, 255);">Your one-stop destination for the latest fashion trends and personalized shopping recommendations.</p>
+
+        <a href="#collections" class="cta">Discover More</a>
+    </div>
+</section>
+
+<!-- Collections Section -->
+<section id="collections">
+    <h2>Fashion Brands</h2>
+    <div class="collection-grid">
+        <div class="collection-item">
+            <h3>ETHNIC</h3>
+            <img src="https://www.safagold.com/wp-content/uploads/2019/12/ethnic.jpg" alt="Ethnic Fashion">
+        </div>
+        <div class="collection-item">
+            <h3>ZELLBURY</h3>
+            <img src="https://www.hdcollection.com.pk/cdn/shop/collections/ZELLBURY_LOGO.jpg?v=1661787351"
+                alt="Zellbury Fashion">
+        </div>
+        <div class="collection-item">
+            <h3>SAPPHIRE</h3>
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtaZsnpwVyl4BJ4EV36cJHTaYzG6tCRPY_7A&s"
+                alt="Sapphire Fashion">
+        </div>
+        <div class="collection-item">
+            <h3>OUTFITTERS</h3>
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSimi8twCTodEQs88YpzRQaDx__CIfABhSX7Q&s"
+                alt="Outfitters Fashion">
+        </div>
+        <div class="collection-item">
+            <h3>SAYA</h3>
+            <img src="https://lcci.pk/wp-content/uploads/2023/08/Saya-Logo-Image.png" alt="Saya Fashion">
+        </div>
+    </div>
+    <!-- Button to redirect to the brands page -->
+    <div class="text-center">
+        <a href="{{ url_for('brand') }}" class="btn">Explore these brands</a>
+        <!-- <a href="{{ url_for('brand') }}" class="explore-button">Explore These Brands</a> -->
+    </div>
+</section>
+
+<!-- Recommendations for You Section -->
+<section id="recommendation" class="recommendation-section text-center">
+<h2>Recommendations for You</h2>
+<p>Select your size:</p>
+<div class="button-group size-group">
+    <button class="recommendation-button" onclick="selectSize('S')">S</button>
+    <button class="recommendation-button" onclick="selectSize('M')">M</button>
+    <button class="recommendation-button" onclick="selectSize('L')">L</button>
+    <button class="recommendation-button" onclick="selectSize('XL')">XL</button>
+</div>
+<p>Select the occasion:</p>
+<div class="button-group occasion-group">
+    <button class="recommendation-button" onclick="selectOccasion('Party')">Party</button>
+    <button class="recommendation-button" onclick="selectOccasion('Home')">Home</button>
+    <button class="recommendation-button" onclick="selectOccasion('Gym')">Gym</button>
+    <button class="recommendation-button" onclick="selectOccasion('Casual')">Casual</button>
+</div>
+<div class="result" id="result"></div>
+</section>
+
+<style>
+/* Styles for the Recommendations Section */
+.recommendation-section {
+    background-color: #f9f9f9; /* Light background for contrast */
+    padding: 30px; /* Add padding for breathing space */
+    border-radius: 10px; /* Rounded corners for a modern look */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    margin: 20px auto; /* Center section */
+    max-width: 600px; /* Limit width for better readability */
+}
+
+h2 {
+    font-family: 'Arial', sans-serif; /* Modern font */
+    color: #333; /* Dark color for the heading */
+    margin-bottom: 20px; /* Space below heading */
+}
+
+p {
+    font-size: 1.2em; /* Larger text for emphasis */
+    color: #666; /* Softer text color */
+}
+
+.button-group {
+    display: flex;
+    justify-content: center; /* Center buttons */
+    margin: 15px 0; /* Space above and below */
+}
+
+.recommendation-button {
+    background-color: #050505; /* Bootstrap primary color */
+    color: white; /* Text color */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded button edges */
+    padding: 10px 15px; /* Padding for size */
+    margin: 0 5px; /* Space between buttons */
+    cursor: pointer; /* Pointer on hover */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.recommendation-button:hover {
+    background-color: #3a3a3a; /* Darker shade on hover */
+}
+
+.result {
+    margin-top: 20px; /* Space above result text */
+    font-size: 1.5em; /* Larger result text */
+    color: #771405; /* Green color for recommendation */
+}
+</style>
+
+<script>
+// Store user selections
+let selectedSize = '';
+let selectedOccasion = '';
+
+const recommendations = {
+    'S': {
+        'Party': 'Sapphire - Luxe-Formal Wear', // Sapphire offers luxury and formal wear for special occasions
+        'Home': 'Ethnic - Classic Daily Fit', // Ethnic offers casual, comfortable wear for home
+        'Gym': 'Outfitters - Street Fit', // Outfitters provides casual, street-inspired outfits, good for light activity
+        'Casual': 'Zellbury - Printed Suit', // Zellbury provides casual, semi-formal wear
+    },
+    'M': {
+        'Party': 'Sapphire - Coat Style', // Sapphire offers chic, elegant party styles like a coat dress
+        'Home': 'Saya - Kurta Shalwar', // Saya provides traditional yet comfortable home wear
+        'Gym': 'Outfitters - Relaxed Fit Jeans', // Outfitters offers comfortable, laid-back wear that could work for gym too
+        'Casual': 'Zellbury - Unstitched Suit', // Zellbury's unstitched collections offer versatility for casual wear
+    },
+    'L': {
+        'Party': 'Saya - Sherwani', // Saya offers elegant, traditional wear for formal occasions like parties
+        'Home': 'Ethnic - Co-ord Set', // Ethnic offers modern, relaxed fits that work well for home wear
+        'Gym': 'Zellbury - Embroidered Suit', // While not traditionally gym wear, Zellbury’s premium suits are a stylish take for active or semi-formal wear
+        'Casual': 'Outfitters - Printed Viscose Shirt', // Outfitters provides casual, comfortable clothing like shirts for everyday wear
+    },
+    'XL': {
+        'Party': 'Ethnic - Boutique - Wedding Edition', // Ethnic offers high-end, elegant wear for weddings and parties
+        'Home': 'Sapphire - BB Cream', // Sapphire also offers cosmetics for at-home grooming
+        'Gym': 'Outfitters - Relaxed Fit Jeans', // Outfitters' casual jeans also fit for active and gym wear
+        'Casual': 'Saya - Shalwar Kameez', // Saya provides classic casual wear with traditional pieces like shalwar kameez
+    },
+};
+
+function selectSize(size) {
+    selectedSize = size;
+    displayRecommendation();
+}
+
+function selectOccasion(occasion) {
+    selectedOccasion = occasion;
+    displayRecommendation();
+}
+
+function displayRecommendation() {
+    const resultDiv = document.getElementById('result');
+    if (selectedSize && selectedOccasion) {
+        const recommendedOutfit = recommendations[selectedSize][selectedOccasion];
+        resultDiv.textContent = `Recommended: ${recommendedOutfit}`;
+
+        // Create URL with selected size and occasion as query parameters
+        const url = `brand.html?size=${selectedSize}&occasion=${selectedOccasion}`;
+        
+    } else {
+        resultDiv.textContent = 'Please select both size and occasion.';
+    }
+}
+
+</script>
+
+
+<!-- Blog Section -->
+<section id="blog">
+    <h2>Fashion News</h2>
+    <div class="blog-grid">
+
+        <article class="blog-post">
+            <img src="https://wholesale.konjae.com/BlogImages/06092023-22-55-44top%2010.jpg.jpg"
+                alt="Men's Fashion Trends">
+            <h3>Latest Trends in Men's Fashion in Pakistan</h3>
+            <p class="post-meta"><span class="author">By Ali Malik</span> | <span class="date">Published on October
+                    20, 2024</span> | <span class="category">Trends</span></p>
+            <p>Stay updated with the latest trends in men's fashion from Pakistan. This season features a mix of
+                traditional and contemporary styles, emphasizing comfort and elegance.</p>
+            <div class="extra-content dotted-content">
+                <p>Discover how designers are incorporating local fabrics and craftsmanship into modern menswear.
+                    From tailored suits to casual wear, explore styles that resonate with today's fashion-forward
+                    men.</p>
+                <p>Learn how to mix and match traditional outfits with modern accessories for a unique look that
+                    showcases both heritage and contemporary flair.</p>
+            </div>
+            <button class="read-more" onclick="toggleContent(this)">Read More</button>
+        </article>
+
+        <article class="blog-post">
+            <img src="https://assets.vogue.com/photos/65b15a331cde98af98bd682e/master/w_2560%2Cc_limit/00-story%2520(17).jpg"
+                alt="Men's Western Fits and Trends">
+            <h3>Men's Western Fits and Trends</h3>
+            <p class="post-meta"><span class="author">By Saif Ahmed</span> | <span class="date">Published on October
+                    5, 2024</span> | <span class="category">Designers</span></p>
+            <p>Explore the latest western fits and trends shaping men's fashion in Pakistan. As global influences
+                permeate local styles, men are increasingly adopting versatile and stylish outfits that blend
+                comfort with sophistication.</p>
+            <div class="extra-content dotted-content">
+                <p>Discover how brands are merging classic western aesthetics with traditional Pakistani tailoring,
+                    creating unique garments that resonate with fashion-forward men.</p>
+                <p>From smart-casual ensembles to tailored suits, learn about the must-have pieces for every modern
+                    man’s wardrobe and how to style them effectively for various occasions.</p>
+            </div>
+            <button class="read-more" onclick="toggleContent(this)">Read More</button>
+        </article>
+
+
+        <article class="blog-post">
+            <img src="https://lamosaik.com/cdn/shop/articles/Bridal_Maxi_Blog_Banner_3b25538e-1ab7-4d9a-8ee3-24c1e1563557_1024x.png?v=1695898513"
+                alt="Wardrobe Essentials">
+            <h3>Wardrobe Essentials for Pakistani Women</h3>
+            <p class="post-meta"><span class="author">By Zara Ahmed</span> | <span class="date">Published on
+                    September 30, 2024</span> | <span class="category">Essentials</span></p>
+            <p>Find out what wardrobe essentials every Pakistani woman should have for versatile styling. A
+                well-curated wardrobe not only enhances your style but also makes getting dressed a breeze.</p>
+            <div class="extra-content dotted-content">
+                <p>From classic kurtas to statement jewelry, learn how to build a stylish and functional wardrobe.
+                    Key pieces to include are the timeless white shalwar kameez, a colorful dupatta, and a pair of
+                    well-fitted jeans that can transition from day to night.</p>
+                <p>Additionally, accessories play a crucial role; invest in quality handbags and footwear that
+                    complement your outfits and reflect your personal style.</p>
+            </div>
+            <button class="read-more" onclick="toggleContent(this)">Read More</button>
+        </article>
+
+        <article class="blog-post">
+            <img src="https://cdn.shopify.com/s/files/1/0456/5778/4486/files/Pakistani_Fashion_Trends.jpg?v=1627907398"
+                alt="Seasonal Fashion Trends">
+            <h3>Must-Have Pieces for This Season in Pakistani Fashion</h3>
+            <p class="post-meta"><span class="author">By Meher Khawaja</span> | <span class="date">Published on
+                    October 15, 2024</span> | <span class="category">Trends</span></p>
+            <p>Stay updated with the must-have pieces for the season and how to style them for a chic look. This
+                fall, the focus is on layering and textures that add depth to your outfit while keeping you
+                comfortable.</p>
+            <div class="extra-content dotted-content">
+                <p>Explore trending fabrics, cuts, and styles that define the current fashion season in Pakistan.
+                    Incorporating elements like shawls and capes can elevate any ensemble, while the use of bold
+                    patterns is perfect for making a statement.</p>
+                <p>Don’t forget the importance of footwear; ankle boots and embellished sandals can tie an outfit
+                    together beautifully.</p>
+            </div>
+            <button class="read-more" onclick="toggleContent(this)">Read More</button>
+        </article>
+
+        <article class="blog-post">
+            <img src="https://images.saymedia-content.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cfl_progressive%2Cq_auto:eco%2Cw_1200/MTgwODI5MTMyNTA1NzUyNjY0/12-most-fashion-designers-of-pakistan.jpg"
+                alt="Fashion Inspiration">
+            <h3>Fashion Inspiration from Pakistani Celebrities</h3>
+            <p class="post-meta"><span class="author">By Ali Raza</span> | <span class="date">Published on September
+                    25, 2024</span> | <span class="category">Inspiration</span></p>
+            <p>Get inspired by the fashion choices of your favorite Pakistani celebrities and how to replicate their
+                looks. Celebrities often set trends that resonate with the masses, making their styles highly sought
+                after.</p>
+            <div class="extra-content dotted-content">
+                <p>Learn about key pieces that define celebrity style and where to find them. From glamorous red
+                    carpet gowns to chic streetwear, explore how these stars mix high-end fashion with accessible
+                    pieces.</p>
+                <p>Plus, discover tips on how to adapt these trends for everyday wear, ensuring you feel confident
+                    and stylish no matter the occasion.</p>
+            </div>
+            <button class="read-more" onclick="toggleContent(this)">Read More</button>
+        </article>
+
+        <article class="blog-post">
+            <img src="https://empress-clothing.com/cdn/shop/files/00_0b63c2b4-1719-4be9-a34b-1491237b7823.jpg?v=1707727649&width=3940"
+                alt="Traditional Clothing">
+            <h3>The Evolution of Traditional Pakistani Clothing</h3>
+            <p class="post-meta"><span class="author">By Hira Malik</span> | <span class="date">Published on October
+                    10, 2024</span> | <span class="category">Tradition</span></p>
+            <p>Explore how traditional Pakistani clothing has evolved and continues to influence modern fashion. The
+                integration of contemporary styles with traditional garments has led to a beautiful fusion that
+                appeals to younger generations.</p>
+            <div class="extra-content dotted-content">
+                <p>Uncover the cultural significance behind various garments and their modern interpretations. For
+                    example, the use of vibrant colors and intricate embroidery in lehengas has transcended bridal
+                    wear, becoming popular for festive occasions and celebrations.</p>
+                <p>Additionally, discover how local artisans are reviving ancient techniques to create fashion that
+                    respects tradition while catering to contemporary tastes.</p>
+            </div>
+            <button class="read-more" onclick="toggleContent(this)">Read More</button>
+        </article>
+
+    </div>
+</section>
+
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2024 Fashion.net. All Rights Reserved.</p>
+    <ul class="social-links">
+        <li><a href="#">Facebook</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Twitter</a></li>
+    </ul>
+</footer>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="js/scripts.js"></script> <!-- Ensure correct path to custom JS -->
+
+<script>
+    function toggleContent(button) {
+        const extraContent = button.previousElementSibling;
+        extraContent.classList.toggle("show");
+        button.textContent = extraContent.classList.contains("show") ? "Read Less" : "Read More";
+    }
+
+    window.onload = function () {
+        const extraContents = document.querySelectorAll('.extra-content');
+        extraContents.forEach(content => content.classList.remove("show"));
+    };
+    document.getElementById("confirm-notifications").addEventListener("click", function () {
+        const checkbox = document.getElementById("allow-notifications");
+        if (checkbox.checked) {
+            setCookie("notificationConsent", "allowed", 30); // Store consent for 30 days
+            alert("Thank you for allowing notifications!");
+        } else {
+            setCookie("notificationConsent", "denied", 30); // Store denial for 30 days
+            alert("You have opted out of notifications.");
+        }
+        document.getElementById("notification-consent").style.display = "none";
+    });
+</script>
+
+
+</body>
+
+</html>
