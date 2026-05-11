@@ -1,15 +1,12 @@
 import mysql.connector
+import os
 
 def get_db_connection():
-    try:
-        connection = mysql.connector.connect(
-            host="fashion-net-2026-dc.mysql.database.azure.com",
-            user="yusrakhalid8",
-            password="Joakmn095",
-            database="fashion_net",
-            ssl_disabled=True
-        )
-        return connection
-    except mysql.connector.Error as err:
-        print(f"Database connection error: {err}")
-        raise
+    connection = mysql.connector.connect(
+        host=os.environ.get("DB_HOST"),
+        user=os.environ.get("DB_USER"),
+        password=os.environ.get("DB_PASSWORD"),
+        database=os.environ.get("DB_NAME"),
+        ssl_disabled=False  # ← bas yeh ek line add karo
+    )
+    return connection
