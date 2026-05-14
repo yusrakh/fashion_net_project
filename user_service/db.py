@@ -8,7 +8,9 @@ def get_db_connection():
             user=os.environ.get('DB_USER', 'yusrakhalid8'),
             password=os.environ.get('DB_PASSWORD', 'Joakmn095'),
             database=os.environ.get('DB_NAME', 'fashion_net'),
-            ssl_disabled=True
+            ssl_disabled=False,
+            ssl_verify_cert=False,
+            ssl_verify_identity=False
         )
         return connection
     except mysql.connector.Error as err:
