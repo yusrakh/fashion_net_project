@@ -6,6 +6,10 @@ from db import get_db_connection
 
 app = Flask(__name__)
 
+
+@app.route("/")
+def home():
+    return "Order Service is Running"
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()

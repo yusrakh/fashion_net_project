@@ -13,7 +13,9 @@ PAYMENT_SERVICE_URL = os.environ.get('PAYMENT_SERVICE_URL', 'http://127.0.0.1:50
 
 
 
-
+@app.route("/")
+def home():
+    return "Order Service is Running"
 
 @app.route('/api/orders', methods=['POST'])
 def place_order():
