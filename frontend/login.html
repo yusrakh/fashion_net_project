@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashion.net | Login</title>
+    <style>
+        body {
+            background-color: #f9f9f9;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .login-container {
+            max-width: 500px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 15px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #4CAF50;
+        }
+
+        .error, .success {
+            text-align: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .signup-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+    <script>
+        // Display success alert and redirect
+        function showSuccessAlert() {
+            setTimeout(() => {
+                alert("Login successful! Your order has been confirmed.");
+                window.location.href = "{{ url_for('home') }}"; // Redirect to home page
+            }, 2000); // Delay to ensure the green text is visible first
+        }
+    </script>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Login to Your Account</h2>
+
+    <!-- Display error or success messages -->
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+    {% if success %}
+    <div class="success">Login successful!</div> <!-- The green success text -->
+    <script>
+        showSuccessAlert(); <!-- Trigger the alert and redirection -->
+    </script>
+    {% endif %}
+
+    <form action="{{ url_for('login') }}" method="POST">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+        <input type="submit" value="Login">
+    </form>
+
+    <p class="signup-link">Don't have an account? <a href="{{ url_for('signup') }}">Sign up here</a></p>
+</div>
+
+</body>
+</html>
