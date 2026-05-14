@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, jsonify, session
+# Line 1 — yeh change karo
+from flask import Flask, render_template, request, jsonify, session, redirect
 import requests
 import os
 
@@ -103,9 +104,7 @@ def brand():
 def category():
     return render_template('category.html')
 
-@app.route('/blog')
-def blog():
-    return render_template('blog.html')
+
 
 @app.route('/admin_login', methods=['GET', 'POST'])
 def admin_login():
