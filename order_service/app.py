@@ -5,16 +5,13 @@ import sys, os
 sys.path.append(os.path.dirname(__file__))
 from db import get_db_connection
 from flask_cors import CORS
+
 app = Flask(__name__)
 CORS(app, origins="*")
 
-app = Flask(__name__)
-PRODUCT_SERVICE_URL = os.environ.get('PRODUCT_SERVICE_URL', 'http://127.0.0.1:5001')
-USER_SERVICE_URL    = os.environ.get('USER_SERVICE_URL',    'http://127.0.0.1:5000')
-PAYMENT_SERVICE_URL = os.environ.get('PAYMENT_SERVICE_URL', 'http://127.0.0.1:5003')
-
-
-
+PRODUCT_SERVICE_URL = os.environ.get('PRODUCT_SERVICE_URL', 'https://fashion-product-service-b7atcad9dfe8g5e3.southeastasia-01.azurewebsites.net')
+USER_SERVICE_URL    = os.environ.get('USER_SERVICE_URL',    'https://fashion-user-service-audqffe9dve4dscm.southeastasia-01.azurewebsites.net')
+PAYMENT_SERVICE_URL = os.environ.get('PAYMENT_SERVICE_URL', 'https://fashion-payment-service-hhfghcg8bya6fvd9.southeastasia-01.azurewebsites.net')
 
 @app.route("/")
 def home():
