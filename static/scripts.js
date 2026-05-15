@@ -89,6 +89,8 @@ document.addEventListener('DOMContentLoaded', function () {
             } catch (err) {
                 alert('Service unavailable. Try again.');
             }
+
+            
         });
     }
 
