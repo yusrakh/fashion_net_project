@@ -1,15 +1,12 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import mysql.connector
 import sys, os
 sys.path.append(os.path.dirname(__file__))
 from db import get_db_connection
 
 app = Flask(__name__)
-
-
-from flask_cors import CORS
-
-CORS(app)  # ← YEH ADD KARO
+CORS(app, origins="*")
 
 @app.route('/api/login', methods=['POST'])
 def login():

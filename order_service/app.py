@@ -4,6 +4,9 @@ import mysql.connector
 import sys, os
 sys.path.append(os.path.dirname(__file__))
 from db import get_db_connection
+from flask_cors import CORS
+app = Flask(__name__)
+CORS(app, origins="*")
 
 app = Flask(__name__)
 PRODUCT_SERVICE_URL = os.environ.get('PRODUCT_SERVICE_URL', 'http://127.0.0.1:5001')

@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify
 import random
 
+from flask_cors import CORS
 app = Flask(__name__)
+CORS(app, origins="*")
 
 @app.route('/api/payment/process', methods=['POST'])
 def process_payment():
