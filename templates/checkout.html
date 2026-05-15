@@ -150,48 +150,92 @@
     </footer>
 
     <script>
-        // Get cart data from localStorage
-        function getCart() {
-            return JSON.parse(localStorage.getItem('cart')) || [];
-        }
-    
-        // Display order summary
-        function displayOrderSummary() {
-            const cart = getCart();
-            const orderSummary = document.getElementById('order-summary');
-            let subtotal = 0;
-    
-            orderSummary.innerHTML = '';
-    
-            cart.forEach(item => {
-                const productDiv = document.createElement('div');
-                productDiv.className = 'product-details';
-                productDiv.innerHTML = `
-                    <div>
-                        <img src="${item.image}" alt="${item.name}">
-                        ${item.name} - ${item.size}
-                    </div>
-                    <div>${item.price}</div>
-                `;
-                orderSummary.appendChild(productDiv);
-                subtotal += parseFloat(item.price);
-            });
-    
-            document.getElementById('subtotal').innerText = `PKR ${subtotal.toFixed(2)}`;
-            const total = subtotal + 199; // Add shipping cost
-            document.getElementById('total-price').innerText = `PKR ${total.toFixed(2)}`;
-        }
-    
-        // Complete Order
-function completeOrder() {
-    // Alert the user and redirect to the login page
-    alert('You must be logged in to place an order.');
-    window.location.href = '/login'; // Redirect to the login.html
-}
+    // Get cart data from localStorage
+    function getCart() {
+        return JSON.parse(localStorage.getItem('cart')) || [];
+    }
 
-        // Initialize the page
-        displayOrderSummary();
-    </script>
+    // Display order summary with images
+    function displayOrderSummary() {
+        const cart = getCart();
+        const orderSummary = document.getElementById('order-summary');
+        let subtotal = 0;
+
+        orderSummary.innerHTML = '';
+
+        cart.forEach(item => {
+            const productDiv = document.createElement('div');
+            productDiv.className = 'product-details';
+            
+            // Image, Name, aur Quantity show karein
+            productDiv.innerHTML = `
+                <div style="display: flex; align-items: center;">
+                    <img src="${item.image}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px; margin-right: 10px;">
+                    <span>${item.name} (x${item.quantity || 1})</span>
+                </div>
+                <div>PKR ${(parseFloat(item.price) * (item.quantity || 1)).toFixed(2)}</div>
+            `;
+            orderSummary.appendChild(productDiv);
+            
+            // Subtotal update karein
+            subtotal += parseFloat(item.price) * (item.quantity || 1);
+        });
+
+        document.getElementById('subtotal').innerText = `PKR ${subtotal.toFixed(2)}`;
+        const total = subtotal + 199; // Add shipping cost
+        document.getElementById('total-price').innerText = `PKR ${total.toFixed(2)}`;
+    }
+
+    // Complete Order via Azure API
+    async function completeOrder() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        const customerId = localStorage.getItem('customer_id');
+
+        if (!isLoggedIn || !customerId) {
+            alert('You must be logged in to place an order.');
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const cart = getCart();
+        if (cart.length === 0) {
+            alert('Your cart is empty.');
+            return;
+        }
+
+        const orderPayload = {
+            customer_id: parseInt(customerId),
+            cart: cart.map(item => ({
+                product_id: parseInt(item.id),
+                quantity: parseInt(item.quantity) || 1
+            }))
+        };
+
+        try {
+            const response = await fetch('https://fashion-order-service-gxgugehgfshngyc9.southeastasia-01.azurewebsites.net/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(orderPayload)
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                alert('Order placed successfully! ' + result.message);
+                localStorage.removeItem('cart'); // Clear cart
+                window.location.href = 'index.html'; // Redirect
+            } else {
+                alert(`Order Failed: ${result.error}`);
+            }
+        } catch (error) {
+            console.error("Order Error:", error);
+            alert('An error occurred while placing your order. Check console.');
+        }
+    }
+
+    // Initialize the page
+    displayOrderSummary();
+</script>
     
 </body>
 
