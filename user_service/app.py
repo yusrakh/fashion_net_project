@@ -7,9 +7,10 @@ from db import get_db_connection
 app = Flask(__name__)
 
 
-@app.route("/")
-def home():
-    return "Order Service is Running"
+from flask_cors import CORS
+
+CORS(app)  # ← YEH ADD KARO
+
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
