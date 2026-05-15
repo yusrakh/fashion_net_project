@@ -1,9 +1,13 @@
 from flask import Flask, request, jsonify
-import random
-
 from flask_cors import CORS
+import mysql.connector
+import sys, os
+sys.path.append(os.path.dirname(__file__))
+from db import get_db_connection
+
 app = Flask(__name__)
-CORS(app, origins="*")
+
+CORS(app, origins=["https://our-fashion-net.vercel.app"])
 
 @app.route('/api/payment/process', methods=['POST'])
 def process_payment():
