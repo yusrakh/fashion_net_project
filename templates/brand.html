@@ -901,12 +901,18 @@ function displayCart() {
 }
 
 function removeFromCart(index) {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    cart.splice(index, 1); // Remove the item at the given index
-    localStorage.setItem('cart', JSON.stringify(cart)); // Save the updated cart to localStorage
-    displayCart(); // Update the cart UI
-}
+            cart.splice(index, 1); 
+            localStorage.setItem('cart', JSON.stringify(cart)); 
+            displayCart(); 
+        }
 
+        function proceedToCheckout() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            window.location.href = 'checkout.html';
+        }
 
 function checkout() {
     const cart = JSON.parse(localStorage.getItem('cart')) || []; // Retrieve cart data from localStorage
