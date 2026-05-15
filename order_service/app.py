@@ -82,10 +82,13 @@ def place_order():
     cursor = connection.cursor()
     try:
         for item in cart:
-            cursor.execute(
-                "INSERT INTO order_history (customer_id, product_id, order_date) VALUES (%s, %s, NOW())",
-                (customer_id, item['product_id'])
-            )
+            qty = int(item.get('quantity', 1))
+            # Jitni quantity hai, utni dafa loop chalayen aur database mein row insert karein
+            for _ in range(qty):
+                cursor.execute(
+                    "INSERT INTO order_history (customer_id, product_id, order_date) VALUES (%s, %s, NOW())",
+                    (customer_id, item['product_id'])
+                )
         connection.commit()
         return jsonify({'success': True, 'message': 'Order placed successfully!'}), 201
     except mysql.connector.Error as err:
