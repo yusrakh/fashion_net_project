@@ -808,27 +808,41 @@ function showProducts(brand, category) {
 
     fetch(`https://fashion-product-service-b7atcad9dfe8g5e3.southeastasia-01.azurewebsites.net/api/brands/${brand.toLowerCase()}/products`)
         .then(res => res.json())
-        .then(products => {
+        .then(allProducts => {
             productGrid.innerHTML = '';
 
-            products.forEach((product, index) => {
-                // Name se match karo — case insensitive
-                const localData = localProducts.find(l => 
+            // Local category products ke naam se filter karo
+            const categoryNames = localProducts.map(l => l.name.toLowerCase());
+
+            const filtered = allProducts.filter(p =>
+                categoryNames.some(name =>
+                    name.includes(p.product_name.toLowerCase()) ||
+                    p.product_name.toLowerCase().includes(name)
+                )
+            );
+
+            // Agar filter kaam na kare toh index se match karo
+            const productsToShow = filtered.length > 0 ? filtered : allProducts.slice(0, localProducts.length);
+
+            productsToShow.forEach((product, index) => {
+                const localData = localProducts.find(l =>
                     l.name.toLowerCase().includes(product.product_name.toLowerCase()) ||
                     product.product_name.toLowerCase().includes(l.name.toLowerCase())
                 ) || localProducts[index] || {};
 
+                const price = product.price;
+                const imageUrl = (localData.image || '').replace(/'/g, "");
+
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
-                const imageUrl = (localData.image || '').replace(/'/g, "");
 
                 productCard.innerHTML = `
                     <img src="${imageUrl}" alt="${product.product_name}" 
-                         style="width:150px; height:150px; object-fit:cover; border-radius:8px;">
+                         style="width:150px;height:150px;object-fit:cover;border-radius:8px;">
                     <h4>${product.product_name}</h4>
                     <p>${localData.description || ''}</p>
-                    <p><strong>PKR ${product.price}</strong></p>
-                    <button onclick='addToCart(${product.product_id}, "${product.product_name}", ${product.price}, "${imageUrl}")'>
+                    <p><strong>PKR ${price}</strong></p>
+                    <button onclick='addToCart(${product.product_id}, "${product.product_name}", ${price}, "${imageUrl}")'>
                         Add to Cart
                     </button>
                 `;
@@ -840,7 +854,6 @@ function showProducts(brand, category) {
             console.error(err);
         });
 }
-
 function convertToPKR(price) {
     if (!price) return "N/A";
     if (price.includes('PKR')) return parseFloat(price.replace('PKR', '').trim()).toFixed(2);
