@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/login", "dest": "/login.html" },
+    { "src": "/signup", "dest": "/signup.html" },
+    { "src": "/checkout", "dest": "/checkout.html" },
+    { "src": "/brand", "dest": "/brand.html" },
+    { "src": "/category", "dest": "/category.html" },
+    { "src": "/admin", "dest": "/admin.html" },
+    { "src": "/admin_login", "dest": "/admin_login.html" }
+  ]
+}
