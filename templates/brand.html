@@ -813,35 +813,33 @@ function showCategories(brand) {
 
 function showProducts(brand, category) {
     const productGrid = document.getElementById('product-grid');
-    productGrid.innerHTML = ''; // Clear the product grid before adding new products
+    productGrid.innerHTML = 'Loading...';
 
-    brandCategories[brand][category].forEach(product => {
-        const productCard = document.createElement('div');
-        productCard.className = 'product-card';
+    fetch(`https://fashion-product-service-b7atcad9dfe8g5e3.southeastasia-01.azurewebsites.net/api/brands/${brand.toLowerCase()}/products`)
+        .then(res => res.json())
+        .then(products => {
+            productGrid.innerHTML = '';
 
-        let sizeDropdownHTML = '';
-        if (product.sizes && product.sizes.length > 0) {
-            sizeDropdownHTML = `
-                <label for="size-${product.name}">Select Size:</label>
-                <select id="size-${product.name}" class="size-dropdown">
-                    ${product.sizes.map(size => `<option value="${size}">${size}</option>`).join('')}
-                </select>
-            `;
-        }
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
 
-        productCard.innerHTML = `
-            <h4>${product.name}</h4>
-            <img src="${product.image}" alt="${product.name}" class="product-image">
-            <p>${product.description}</p>
-            <p>Price: ${convertToPKR(product.price)} PKR</p>
-            ${sizeDropdownHTML} <!-- Only show the size dropdown if the product has sizes -->
-            <button class="cart-button" onclick="addToCart('${product.name}', '${product.image}', '${convertToPKR(product.price)}')">Add to Cart</button>
-        `;
+                productCard.innerHTML = `
+                    <h4>${product.product_name}</h4>
+                    <p>Price: ${product.price}</p>
+                    <button onclick="addToCart(${product.product_id}, '${product.product_name}', '${product.price}')">
+                        Add to Cart
+                    </button>
+                `;
 
-        productGrid.appendChild(productCard);
-    });
+                productGrid.appendChild(productCard);
+            });
+        })
+        .catch(err => {
+            productGrid.innerHTML = 'Error loading products';
+            console.error(err);
+        });
 }
-
 
 function convertToPKR(price) {
     if (!price) return "N/A";
@@ -850,24 +848,24 @@ function convertToPKR(price) {
     return "N/A";
 }
 
-function addToCart(name, image, price) {
-    // Get selected size from dropdown
-    const sizeDropdown = document.getElementById(`size-${name}`);
-    const selectedSize = sizeDropdown ? sizeDropdown.value : 'One Size';
+function addToCart(id, name, price) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    // Check if the product already exists in the cart (same name and size)
-    const existingItemIndex = cart.findIndex(item => item.name === name && item.size === selectedSize);
+    const existing = cart.find(item => item.product_id === id);
 
-    if (existingItemIndex !== -1) {
-        // If the product exists, update the quantity
-        cart[existingItemIndex].quantity += 1;
+    if (existing) {
+        existing.quantity += 1;
     } else {
-        // If the product does not exist, add it to the cart with quantity = 1
-        cart.push({ name, image, price, size: selectedSize, quantity: 1 });
+        cart.push({
+            product_id: id,
+            name,
+            price,
+            quantity: 1
+        });
     }
+
     localStorage.setItem('cart', JSON.stringify(cart));
-    alert(`${name} (Size: ${selectedSize}) added to cart!`);
-    displayCart();
+    alert("Added to cart");
 }
 
 
@@ -931,7 +929,7 @@ function checkout() {
     localStorage.setItem('totalPayment', totalPayment);
 
     // Redirect to checkout.html
-    window.location.href = "templates/checkout.html";
+    window.location.href = "/checkout.html";
     // This needs to be adjusted based on your backend routing
 }
 
