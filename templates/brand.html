@@ -7,7 +7,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fashion.net - Brands</title>
-    <!-- <link rel="stylesheet" href="styles.css"> -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script src="{{ url_for('static', filename='scripts.js') }}"></script>
     <style>
@@ -414,17 +413,7 @@
                 <option value="XL">XL</option>
             </select>
         </div>
-            <!-- <div class="filter-section">
-                <label for="brand">Brand:</label>
-                <select id="brand">
-                    <option value="">Select Brand</option>
-                    <option value="ethnic">Ethnic</option>
-                    <option value="zellbury">Zellbury</option>
-                    <option value="sapphire">Sapphire</option>
-                    <option value="outfitters">Outfitters</option>
-                    <option value="saya">Saya</option>
-                </select>
-            </div> -->
+            
             <div class="filter-section">
                 <label for="budget">Budget (PKR):</label>
                 <input type="range" id="budget" name="budget" min="100" max="25000" value="5000" oninput="updateBudgetValue(this.value)">
@@ -815,23 +804,27 @@ function showProducts(brand, category) {
     const productGrid = document.getElementById('product-grid');
     productGrid.innerHTML = 'Loading...';
 
+    const localProducts = brandCategories[brand][category]; // local images
+
     fetch(`https://fashion-product-service-b7atcad9dfe8g5e3.southeastasia-01.azurewebsites.net/api/brands/${brand.toLowerCase()}/products`)
         .then(res => res.json())
         .then(products => {
             productGrid.innerHTML = '';
 
-            products.forEach(product => {
+            products.forEach((product, index) => {
+                const localData = localProducts[index] || {}; // match by index
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
 
                 productCard.innerHTML = `
+                    <img src="${localData.image || ''}" alt="${product.product_name}" width="150">
                     <h4>${product.product_name}</h4>
-                    <p>Price: ${product.price}</p>
-                    <button onclick="addToCart(${product.product_id}, '${product.product_name}', '${product.price}')">
+                    <p>${localData.description || ''}</p>
+                    <p>Price: PKR ${product.price}</p>
+                    <button onclick="addToCart(${product.product_id}, '${product.product_name}', '${product.price}', '${localData.image || ''}')">
                         Add to Cart
                     </button>
                 `;
-
                 productGrid.appendChild(productCard);
             });
         })
@@ -848,24 +841,16 @@ function convertToPKR(price) {
     return "N/A";
 }
 
-function addToCart(id, name, price) {
+function addToCart(id, name, price, image) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
     const existing = cart.find(item => item.product_id === id);
-
     if (existing) {
         existing.quantity += 1;
     } else {
-        cart.push({
-            product_id: id,
-            name,
-            price,
-            quantity: 1
-        });
+        cart.push({ product_id: id, name, price, image, quantity: 1 });
     }
-
     localStorage.setItem('cart', JSON.stringify(cart));
-    alert("Added to cart");
+    alert("Added to cart!");
 }
 
 
@@ -905,12 +890,13 @@ function removeFromCart(index) {
         }
 
         function proceedToCheckout() {
-            if (cart.length === 0) {
-                alert('Your cart is empty!');
-                return;
-            }
-            window.location.href = "templates/checkout.html";
-        }
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    if (cart.length === 0) {
+        alert('Your cart is empty!');
+        return;
+    }
+    window.location.href = "/checkout.html";
+}
 
 function checkout() {
     const cart = JSON.parse(localStorage.getItem('cart')) || []; // Retrieve cart data from localStorage
@@ -956,113 +942,6 @@ function checkout() {
         document.getElementById('budget-value').textContent = `PKR Rs{value}`;
     }
 
-//     // Function to clear all filters
-//     function clearFilters() {
-//         const filterOptions = document.querySelectorAll('.filter-options select, .filter-options input');
-//         filterOptions.forEach(option => {
-//             if (option.type === 'range') {
-//                 option.value = option.min; // Reset range to minimum value
-//                 updateBudgetValue(option.value);
-//             } else {
-//                 option.value = ''; // Reset select elements
-//             }
-//         });
-//     }
-//     const products = {
-//     "Ethnic": [
-//         { name: "Classic Daily Fit", category: "Clothing", price: 2250 },
-//         { name: "Co-ord Set", category: "Clothing", price: 4500 },
-//         { name: "Khussas", category: "Footwear", price: 1700 }
-//     ],
-//     "Zellbury": [
-//         { name: "Embroidered Suit", category: "Clothing", price: 5000 },
-//         { name: "Tote Bag", category: "Accessories", price: 2000 }
-//     ],
-//     "Sapphire": [
-//         { name: "Luxe Formal Wear", category: "Clothing", price: 15000 },
-//         { name: "Lipstick", category: "Cosmetics", price: 1800 }
-//     ],
-//     "Outfitters": [
-//         { name: "Street Fit", category: "Clothing", price: 4000 },
-//         { name: "Printed Viscose Shirt", category: "Clothing", price: 900 }
-//     ],
-//     "Saya": [
-//         { name: "Kurta Shalwar", category: "Clothing", price: 5000 },
-//         { name: "Antique Jewellery", category: "Accessories", price: 3500 }
-//     ]
-// };
-
-// // Function to update the budget value displayed
-// function updateBudgetValue(value) {
-//     document.getElementById('budget-value').textContent = `PKR ${value}`;
-// }
-
-// // Function to apply filters and display results
-// function applyFilters() {
-//     const categoryInput = document.getElementById("category").value;
-//     const budgetInput = parseInt(document.getElementById("budget").value);
-//     const brandInput = document.getElementById("brand").value;
-
-//     let results = [];
-
-//     // Filter products based on the selected inputs
-//     Object.keys(products).forEach(brand => {
-//         if (brandInput && brand !== brandInput) return; // Skip other brands if a specific brand is selected
-
-//         products[brand].forEach(product => {
-//             if (
-//                 (!categoryInput || product.category === categoryInput) &&
-//                 product.price <= budgetInput
-//             ) {
-//                 results.push({ ...product, brand });
-//             }
-//         });
-//     });
-
-//     displayResults(results, budgetInput);
-// }
-
-// function updateBudgetValue(value) {
-//             document.getElementById('budget-value').textContent = `PKR ${value}`;
-//         }
-
-//         function applyFilters() {
-//             const sizeInput = document.getElementById("size").value;
-//             const categoryInput = document.getElementById("category").value;
-//             const occasionInput = document.getElementById("occasion").value;
-//             const budgetInput = parseInt(document.getElementById("budget").value);
-
-//             let resultText = "No results found";
-
-//             Object.keys(products).forEach(brand => {
-//                 products[brand].forEach(product => {
-//                     if (
-//                         product.size.includes(sizeInput) &&
-//                         product.category === categoryInput &&
-//                         product.occasion === occasionInput &&
-//                         product.price <= budgetInput
-//                     ) {
-//                         resultText = `Results: ${brand} - ${product.name}`;
-//                     }
-//                 });
-//             });
-
-//             alert(resultText); // Show the result in an alert
-//         }
-
-//         function clearFilters() {
-//             document.querySelectorAll(".filter-section select, .filter-section input").forEach(input => {
-//                 if (input.type === "range") {
-//                     input.value = input.min;
-//                     updateBudgetValue(input.value);
-//                 } else {
-//                     input.value = "";
-//                 }
-//             });
-
-//             const resultsContainer = document.getElementById("results");
-//             resultsContainer.innerHTML = ""; // Clear previous results
-//         }
 function showAlert() {  
         alert("Filters applied");  
     }  
