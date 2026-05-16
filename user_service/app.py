@@ -7,7 +7,7 @@ from db import get_db_connection
 
 app = Flask(__name__)
 
-CORS(app, origins=["https://our-fashion-net.vercel.app"])
+CORS(app, origins="*")
 
 @app.route('/api/login', methods=['POST'])
 def login():
@@ -56,20 +56,16 @@ def signup():
     finally:
         cursor.close()
         connection.close()
-
 @app.route('/api/users/<int:customer_id>', methods=['GET'])
 def get_user(customer_id):
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
     try:
-        cursor.execute(
-            "SELECT customer_id, username, email FROM customers WHERE customer_id = %s",
-            (customer_id,)
-        )
+        cursor.execute("SELECT * FROM customers WHERE customer_id = %s", (customer_id,))
         user = cursor.fetchone()
-        if user:
-            return jsonify(user), 200
-        return jsonify({'error': 'User not found'}), 404
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        return jsonify(user), 200
     finally:
         cursor.close()
         connection.close()

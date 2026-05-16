@@ -7,8 +7,7 @@ from db import get_db_connection
 from flask_cors import CORS
 
 app = Flask(__name__)
-
-CORS(app, origins=["https://our-fashion-net.vercel.app"])
+CORS(app, origins="*")
 
 PRODUCT_SERVICE_URL = os.environ.get('PRODUCT_SERVICE_URL', 'https://fashion-product-service-b7atcad9dfe8g5e3.southeastasia-01.azurewebsites.net')
 USER_SERVICE_URL    = os.environ.get('USER_SERVICE_URL',    'https://fashion-user-service-audqffe9dve4dscm.southeastasia-01.azurewebsites.net')
