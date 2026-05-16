@@ -867,24 +867,19 @@ function addToCart(id, name, price, image) {
     if (existing) {
         existing.quantity += 1;
     } else {
-        cart.push({ 
-            product_id: id, 
-            name: name, 
-            price: parseFloat(price),  // ← number rakho
-            image: image, 
-            quantity: 1 
-        });
+        cart.push({ product_id: id, name, price: parseFloat(price), image, quantity: 1 });
     }
     localStorage.setItem('cart', JSON.stringify(cart));
+    displayCart(); // ← yeh add karo
     alert("Added to cart!");
 }
 
-
 function displayCart() {
     const cartItems = document.getElementById('cart-items');
-    const cart = JSON.parse(localStorage.getItem('cart')) || []; // Retrieve cart data from localStorage
-
-    cartItems.innerHTML = ''; // Clear the existing cart items before updating
+    if (!cartItems) return; // agar element nahi hai toh skip
+    
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cartItems.innerHTML = '';
 
     if (cart.length === 0) {
         cartItems.innerHTML = '<p>Your cart is empty.</p>';
@@ -895,20 +890,21 @@ function displayCart() {
         const cartItem = document.createElement('div');
         cartItem.className = 'cart-item';
         cartItem.innerHTML = `
-            <h4>${item.name} (Size: ${item.size})</h4>
             <img src="${item.image}" alt="${item.name}" width="50">
-            <p>Price: ${item.price} PKR</p>
-            <p>Quantity: ${item.quantity}</p>
-            <button class="remove-button" onclick="removeFromCart(${index})">Remove</button>
+            <span>${item.name} x${item.quantity}</span>
+            <span>PKR ${(item.price * item.quantity).toFixed(2)}</span>
+            <button onclick="removeFromCart(${index})">Remove</button>
         `;
         cartItems.appendChild(cartItem);
     });
 
-    // Calculate the total
-    const total = cart.reduce((total, item) => total + parseFloat(item.price) * item.quantity, 0);
-    document.getElementById('cart-total').innerText = `Total: PKR ${total.toFixed(2)}`;
+    const total = cart.reduce((t, item) => t + item.price * item.quantity, 0);
+    const totalEl = document.getElementById('cart-total');
+    if (totalEl) totalEl.innerText = `Total: PKR ${total.toFixed(2)}`;
 }
 
+// Page load pe bhi display karo
+displayCart();
 function removeFromCart(index) {
             cart.splice(index, 1); 
             localStorage.setItem('cart', JSON.stringify(cart)); 
