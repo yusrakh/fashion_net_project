@@ -804,7 +804,7 @@ function showProducts(brand, category) {
     const productGrid = document.getElementById('product-grid');
     productGrid.innerHTML = 'Loading...';
 
-    const localProducts = brandCategories[brand][category]; // local images
+    const localProducts = brandCategories[brand][category] || [];
 
     fetch(`https://fashion-product-service-b7atcad9dfe8g5e3.southeastasia-01.azurewebsites.net/api/brands/${brand.toLowerCase()}/products`)
         .then(res => res.json())
@@ -812,16 +812,23 @@ function showProducts(brand, category) {
             productGrid.innerHTML = '';
 
             products.forEach((product, index) => {
-                const localData = localProducts[index] || {}; // match by index
+                // Name se match karo — case insensitive
+                const localData = localProducts.find(l => 
+                    l.name.toLowerCase().includes(product.product_name.toLowerCase()) ||
+                    product.product_name.toLowerCase().includes(l.name.toLowerCase())
+                ) || localProducts[index] || {};
+
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
+                const imageUrl = (localData.image || '').replace(/'/g, "");
 
                 productCard.innerHTML = `
-                    <img src="${localData.image || ''}" alt="${product.product_name}" width="150">
+                    <img src="${imageUrl}" alt="${product.product_name}" 
+                         style="width:150px; height:150px; object-fit:cover; border-radius:8px;">
                     <h4>${product.product_name}</h4>
                     <p>${localData.description || ''}</p>
-                    <p>Price: PKR ${product.price}</p>
-                    <button onclick="addToCart(${product.product_id}, '${product.product_name}', '${product.price}', '${localData.image || ''}')">
+                    <p><strong>PKR ${product.price}</strong></p>
+                    <button onclick='addToCart(${product.product_id}, "${product.product_name}", ${product.price}, "${imageUrl}")'>
                         Add to Cart
                     </button>
                 `;
@@ -847,7 +854,13 @@ function addToCart(id, name, price, image) {
     if (existing) {
         existing.quantity += 1;
     } else {
-        cart.push({ product_id: id, name, price, image, quantity: 1 });
+        cart.push({ 
+            product_id: id, 
+            name: name, 
+            price: parseFloat(price),  // ← number rakho
+            image: image, 
+            quantity: 1 
+        });
     }
     localStorage.setItem('cart', JSON.stringify(cart));
     alert("Added to cart!");
