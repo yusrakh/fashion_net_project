@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="/static/styles.css">
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -206,9 +206,10 @@
         const orderPayload = {
             customer_id: parseInt(customerId),
             cart: cart.map(item => ({
-                product_id: parseInt(item.id),
-                quantity: parseInt(item.quantity) || 1
-            }))
+    product_id: parseInt(item.product_id),  // ← item.id se item.product_id
+    quantity: parseInt(item.quantity) || 1,
+    price: parseFloat(item.price) || 0
+}))
         };
 
         try {
