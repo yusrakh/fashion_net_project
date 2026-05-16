@@ -187,52 +187,55 @@
     }
 
     // Complete Order via Azure API
-    async function completeOrder() {
-        const isLoggedIn = localStorage.getItem('isLoggedIn');
-        const customerId = localStorage.getItem('customer_id');
+    
+        async function completeOrder() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    const customerId = localStorage.getItem('customer_id');
 
-        if (!isLoggedIn || !customerId) {
-            alert('You must be logged in to place an order.');
-            window.location.href = 'login.html';
-            return;
-        }
-
-        const cart = getCart();
-        if (cart.length === 0) {
-            alert('Your cart is empty.');
-            return;
-        }
-
-        const orderPayload = {
-            customer_id: parseInt(customerId),
-            cart: cart.map(item => ({
-    product_id: parseInt(item.product_id),  // ← item.id se item.product_id
-    quantity: parseInt(item.quantity) || 1,
-    price: parseFloat(item.price) || 0
-}))
-        };
-
-        try {
-            const response = await fetch('https://fashion-order-service-gxgugehgfshngyc9.southeastasia-01.azurewebsites.net/api/orders', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(orderPayload)
-            });
-
-            const result = await response.json();
-
-            if (response.ok && result.success) {
-                alert('Order placed successfully! ' + result.message);
-                localStorage.removeItem('cart'); // Clear cart
-                window.location.href = 'index.html'; // Redirect
-            } else {
-                alert(`Order Failed: ${result.error}`);
-            }
-        } catch (error) {
-            console.error("Order Error:", error);
-            alert('An error occurred while placing your order. Check console.');
-        }
+    if (!isLoggedIn || !customerId) {
+        alert('You must be logged in to place an order.');
+        window.location.href = 'login.html';
+        return;
     }
+
+    const cart = getCart();
+    if (cart.length === 0) {
+        alert('Your cart is empty.');
+        return;
+    }
+
+    const orderPayload = {
+        customer_id: parseInt(customerId),
+        cart: cart.map(item => ({
+            product_id: parseInt(item.product_id),
+            quantity: parseInt(item.quantity) || 1,
+            price: parseFloat(item.price) || 0
+        }))
+    };
+
+    try {
+        const response = await fetch('https://fashion-order-service-gxgugehgfshngyc9.southeastasia-01.azurewebsites.net/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderPayload)
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            // ← Sirf cart clear karo — login info rakho
+            localStorage.removeItem('cart');
+            localStorage.removeItem('totalPayment');
+            alert('Order placed successfully!');
+            window.location.href = '/index.html';
+        } else {
+            alert(`Order Failed: ${result.error}`);
+        }
+    } catch (error) {
+        console.error("Order Error:", error);
+        alert('An error occurred. Please try again.');
+    }
+}
 
     // Initialize the page
     displayOrderSummary();
