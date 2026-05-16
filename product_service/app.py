@@ -6,8 +6,7 @@ from db import get_db_connection
 
 from flask_cors import CORS
 app = Flask(__name__)
-
-CORS(app, origins=["https://our-fashion-net.vercel.app"])
+CORS(app, origins="*")
 
 @app.route('/api/products', methods=['GET'])
 def get_all_products():

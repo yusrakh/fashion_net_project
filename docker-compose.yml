@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  user_service:
+    build: ./user_service
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=fashion-net-2026-dc.mysql.database.azure.com
+      - DB_USER=yusrakhalid8
+      - DB_PASSWORD=Joakmn095
+      - DB_NAME=fashion_net
+    networks:
+      - fashion_net
+
+  product_service:
+    build: ./product_service
+    ports:
+      - "5001:5001"
+    environment:
+      - DB_HOST=fashion-net-2026-dc.mysql.database.azure.com
+      - DB_USER=yusrakhalid8
+      - DB_PASSWORD=Joakmn095
+      - DB_NAME=fashion_net
+    networks:
+      - fashion_net
+
+  order_service:
+    build: ./order_service
+    ports:
+      - "5002:5002"
+    environment:
+      - DB_HOST=fashion-net-2026-dc.mysql.database.azure.com
+      - DB_USER=yusrakhalid8
+      - DB_PASSWORD=Joakmn095
+      - DB_NAME=fashion_net
+      - USER_SERVICE_URL=http://user_service:5000
+      - PRODUCT_SERVICE_URL=http://product_service:5001
+      - PAYMENT_SERVICE_URL=http://payment_service:5003
+    networks:
+      - fashion_net
+
+  payment_service:
+    build: ./payment_service
+    ports:
+      - "5003:5003"
+    environment:
+      - DB_HOST=fashion-net-2026-dc.mysql.database.azure.com
+      - DB_USER=yusrakhalid8
+      - DB_PASSWORD=Joakmn095
+      - DB_NAME=fashion_net
+    networks:
+      - fashion_net
+
+networks:
+  fashion_net:
+    driver: bridge
